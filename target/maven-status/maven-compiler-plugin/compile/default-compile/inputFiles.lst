@@ -1,4 +1,5 @@
 /home/runner/workspace/src/main/java/com/modelregistry/dto/ModelDTO.java
+/home/runner/workspace/src/main/java/com/modelregistry/config/SwaggerConfig.java
 /home/runner/workspace/src/main/java/com/modelregistry/controller/ModelController.java
 /home/runner/workspace/src/main/java/com/modelregistry/entity/Model.java
 /home/runner/workspace/src/main/java/com/modelregistry/repository/ModelRepository.java
