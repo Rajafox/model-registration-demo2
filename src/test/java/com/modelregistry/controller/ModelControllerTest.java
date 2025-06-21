@@ -185,7 +185,7 @@ class ModelControllerTest {
         mockMvc.perform(get("/api/models/filter")
                 .param("modelName", "Test")
                 .param("businessLine", "Retail Banking"))
-                .andExpected(status().isOk())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].modelName").value("Test Model"));
 
         verify(modelService, times(1)).getFilteredModels(any(), any(), any(), any(), any(), any(), any(), any(), any());
