@@ -3,4 +3,4 @@ entrypoint = "README.md"
 
 [nix]
 channel = "stable-24_05"
-packages = ["cowsay"]
+packages = ["cowsay","openjdk17","nodejs_20","maven"]
