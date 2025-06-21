@@ -92,7 +92,8 @@ public class ModelService {
         model.setBusinessLine(dto.getBusinessLine());
         model.setModelType(dto.getModelType());
         model.setRiskRating(dto.getRiskRating());
-        model.setStatus(dto.getStatus());
+        // Set default status as Draft if no status provided
+        model.setStatus(dto.getStatus() != null && !dto.getStatus().trim().isEmpty() ? dto.getStatus() : "Draft");
         model.setUpdatedBy(dto.getUpdatedBy());
         return model;
     }
