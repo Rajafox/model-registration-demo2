@@ -20,3 +20,7 @@ args = "mvn clean compile"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "mvn spring-boot:run"
+
+[[ports]]
+localPort = 5000
+externalPort = 80
