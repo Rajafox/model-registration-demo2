@@ -18,6 +18,7 @@ public class ModelDTO {
     @NotBlank(message = "Model sponsor is required")
     private String modelSponsor;
 
+    @NotBlank(message = "Model validator name is required")
     private String modelValidatorName;
 
     @NotBlank(message = "Business line is required")

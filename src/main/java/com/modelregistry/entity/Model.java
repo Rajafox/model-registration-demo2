@@ -27,6 +27,9 @@ public class Model {
     @Column(nullable = false)
     private String modelSponsor;
 
+    @NotBlank(message = "Model validator name is required")
+    @Size(max = 255, message = "Model validator name must not exceed 255 characters")
+    @Column(nullable = false)
     private String modelValidatorName;
 
     @NotBlank(message = "Business line is required")
