@@ -1,4 +1,3 @@
-
 package com.modelregistry.service;
 
 import com.modelregistry.dto.ModelDTO;
@@ -12,7 +11,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class ModelService {
-    
+
     @Autowired
     private ModelRepository modelRepository;
 
@@ -89,6 +88,7 @@ public class ModelService {
         model.setModelName(dto.getModelName());
         model.setModelVersion(dto.getModelVersion());
         model.setModelSponsor(dto.getModelSponsor());
+        model.setModelValidatorName(dto.getModelValidatorName());
         model.setBusinessLine(dto.getBusinessLine());
         model.setModelType(dto.getModelType());
         model.setRiskRating(dto.getRiskRating());
@@ -102,6 +102,7 @@ public class ModelService {
         model.setModelName(dto.getModelName());
         model.setModelVersion(dto.getModelVersion());
         model.setModelSponsor(dto.getModelSponsor());
+		model.setModelValidatorName(dto.getModelValidatorName());
         model.setBusinessLine(dto.getBusinessLine());
         model.setModelType(dto.getModelType());
         model.setRiskRating(dto.getRiskRating());

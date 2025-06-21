@@ -1,4 +1,3 @@
-
 package com.modelregistry.entity;
 
 import jakarta.persistence.*;
@@ -27,6 +26,8 @@ public class Model {
     @Size(max = 255, message = "Model sponsor must not exceed 255 characters")
     @Column(nullable = false)
     private String modelSponsor;
+
+    private String modelValidatorName;
 
     @NotBlank(message = "Business line is required")
     @Column(nullable = false)
@@ -88,6 +89,14 @@ public class Model {
 
     public String getModelSponsor() { return modelSponsor; }
     public void setModelSponsor(String modelSponsor) { this.modelSponsor = modelSponsor; }
+
+    public String getModelValidatorName() {
+        return modelValidatorName;
+    }
+
+    public void setModelValidatorName(String modelValidatorName) {
+        this.modelValidatorName = modelValidatorName;
+    }
 
     public String getBusinessLine() { return businessLine; }
     public void setBusinessLine(String businessLine) { this.businessLine = businessLine; }
