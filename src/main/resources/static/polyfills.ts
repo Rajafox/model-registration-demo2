@@ -1,4 +1,3 @@
-
 /**
  * This file includes polyfills needed by Angular and is loaded before the app.
  * You can add your own extra polyfills to this file.
@@ -7,6 +6,14 @@
 import 'core-js/es6/reflect';
 import 'core-js/es7/reflect';
 import 'zone.js/dist/zone';
+
+if (process.env.ENV === 'production') {
+  // Production
+} else {
+  // Development and testing
+  Error['stackTraceLimit'] = Infinity;
+  require('zone.js/dist/long-stack-trace-zone');
+}
 
 // Used for reflect-metadata in JIT. If you use AOT (and only Angular decorators), you can remove.
 import 'core-js/es7/reflect';

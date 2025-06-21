@@ -6,7 +6,7 @@ channel = "stable-24_05"
 packages = ["cowsay", "openjdk17", "nodejs_20", "maven"]
 
 [workflows]
-runButton = "Run Spring Boot App"
+runButton = "Run Full Stack App"
 
 [[workflows.workflow]]
 name = "Run Spring Boot App"
@@ -42,6 +42,19 @@ mode = "sequential"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "npm install"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run start"
+
+[[workflows.workflow]]
+name = "Run Full Stack App"
+author = 43933978
+mode = "parallel"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "mvn spring-boot:run"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
