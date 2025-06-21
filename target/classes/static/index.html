@@ -46,6 +46,12 @@
                                ng-model="filters.modelSponsor" ng-change="applyFilters()">
                     </div>
                     <div class="col-md-3">
+                        <input type="text" class="form-control" placeholder="Model Validator Name" 
+                               ng-model="filters.modelValidatorName" ng-change="applyFilters()">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-3">
                         <select class="form-select" ng-model="filters.businessLine" ng-change="applyFilters()">
                             <option value="">All Business Lines</option>
                             <option value="Retail Banking">Retail Banking</option>
@@ -54,7 +60,6 @@
                             <option value="Risk Management">Risk Management</option>
                         </select>
                     </div>
-                </div>
                 <div class="row mb-3">
                     <div class="col-md-3">
                         <select class="form-select" ng-model="filters.modelType" ng-change="applyFilters()">
@@ -108,6 +113,9 @@
                                 <th ng-click="sortBy('modelSponsor')" class="sortable">
                                     Model Sponsor <i class="fas fa-sort"></i>
                                 </th>
+                                <th ng-click="sortBy('modelValidatorName')" class="sortable">
+                                    Model Validator <i class="fas fa-sort"></i>
+                                </th>
                                 <th ng-click="sortBy('businessLine')" class="sortable">
                                     Business Line <i class="fas fa-sort"></i>
                                 </th>
@@ -135,6 +143,7 @@
                                 <td>{{model.modelName}}</td>
                                 <td>{{model.modelVersion}}</td>
                                 <td>{{model.modelSponsor}}</td>
+                                <td>{{model.modelValidatorName}}</td>
                                 <td>{{model.businessLine}}</td>
                                 <td>{{model.modelType}}</td>
                                 <td>
@@ -223,9 +232,12 @@
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label class="form-label">Model Validator Name</label>
+                                <label class="form-label">Model Validator Name *</label>
                                 <input type="text" class="form-control" ng-model="currentModel.modelValidatorName" 
-                                       name="modelValidatorName" placeholder="Enter model validator name">
+                                       required name="modelValidatorName" placeholder="Enter model validator name">
+                                <div class="text-danger" ng-show="modelForm.modelValidatorName.$invalid && modelForm.modelValidatorName.$touched">
+                                    Model validator name is required
+                                </div>
                             </div>
                         </div>
                     </div>
