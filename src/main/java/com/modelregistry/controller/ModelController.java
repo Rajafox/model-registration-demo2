@@ -65,6 +65,7 @@ public class ModelController {
             @RequestParam(required = false) String modelName,
             @RequestParam(required = false) String modelVersion,
             @RequestParam(required = false) String modelSponsor,
+            @RequestParam(required = false) String modelValidatorName,
             @RequestParam(required = false) String businessLine,
             @RequestParam(required = false) String modelType,
             @RequestParam(required = false) String riskRating,
@@ -72,7 +73,7 @@ public class ModelController {
             @RequestParam(required = false) String updatedBy) {
         
         List<ModelDTO> models = modelService.getFilteredModels(
-            modelName, modelVersion, modelSponsor, businessLine, 
+            modelName, modelVersion, modelSponsor, modelValidatorName, businessLine, 
             modelType, riskRating, status, updatedBy);
         return ResponseEntity.ok(models);
     }

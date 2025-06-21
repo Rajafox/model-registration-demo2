@@ -57,11 +57,11 @@ public class ModelService {
     }
 
     public List<ModelDTO> getFilteredModels(String modelName, String modelVersion, 
-                                          String modelSponsor, String businessLine, 
+                                          String modelSponsor, String modelValidatorName, String businessLine, 
                                           String modelType, String riskRating, 
                                           String status, String updatedBy) {
         return modelRepository.findByFilters(modelName, modelVersion, modelSponsor, 
-                                           businessLine, modelType, riskRating, 
+                                           modelValidatorName, businessLine, modelType, riskRating, 
                                            status, updatedBy)
                 .stream()
                 .map(this::convertToDTO)

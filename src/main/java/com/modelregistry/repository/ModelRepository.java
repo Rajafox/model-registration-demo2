@@ -15,6 +15,7 @@ public interface ModelRepository extends JpaRepository<Model, Long> {
            "(:modelName IS NULL OR LOWER(m.modelName) LIKE LOWER(CONCAT('%', :modelName, '%'))) AND " +
            "(:modelVersion IS NULL OR LOWER(m.modelVersion) LIKE LOWER(CONCAT('%', :modelVersion, '%'))) AND " +
            "(:modelSponsor IS NULL OR LOWER(m.modelSponsor) LIKE LOWER(CONCAT('%', :modelSponsor, '%'))) AND " +
+           "(:modelValidatorName IS NULL OR LOWER(m.modelValidatorName) LIKE LOWER(CONCAT('%', :modelValidatorName, '%'))) AND " +
            "(:businessLine IS NULL OR m.businessLine = :businessLine) AND " +
            "(:modelType IS NULL OR m.modelType = :modelType) AND " +
            "(:riskRating IS NULL OR m.riskRating = :riskRating) AND " +
@@ -23,6 +24,7 @@ public interface ModelRepository extends JpaRepository<Model, Long> {
     List<Model> findByFilters(@Param("modelName") String modelName,
                              @Param("modelVersion") String modelVersion,
                              @Param("modelSponsor") String modelSponsor,
+                             @Param("modelValidatorName") String modelValidatorName,
                              @Param("businessLine") String businessLine,
                              @Param("modelType") String modelType,
                              @Param("riskRating") String riskRating,
