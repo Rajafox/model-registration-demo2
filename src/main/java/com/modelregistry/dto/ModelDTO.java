@@ -29,7 +29,6 @@ public class ModelDTO {
     @NotBlank(message = "Risk rating is required")
     private String riskRating;
     
-    @NotBlank(message = "Status is required")
     private String status;
     
     private String updatedBy;
