@@ -11,7 +11,6 @@ angular.module('modelRegistryApp', [])
         modelName: '',
         modelVersion: '',
         modelSponsor: '',
-        modelValidatorName: '',
         businessLine: '',
         modelType: '',
         riskRating: '',
@@ -38,7 +37,6 @@ angular.module('modelRegistryApp', [])
         if ($scope.filters.modelName) params.modelName = $scope.filters.modelName;
         if ($scope.filters.modelVersion) params.modelVersion = $scope.filters.modelVersion;
         if ($scope.filters.modelSponsor) params.modelSponsor = $scope.filters.modelSponsor;
-        if ($scope.filters.modelValidatorName) params.modelValidatorName = $scope.filters.modelValidatorName;
         if ($scope.filters.businessLine) params.businessLine = $scope.filters.businessLine;
         if ($scope.filters.modelType) params.modelType = $scope.filters.modelType;
         if ($scope.filters.riskRating) params.riskRating = $scope.filters.riskRating;
@@ -71,8 +69,7 @@ angular.module('modelRegistryApp', [])
     // Show create form
     $scope.showCreateForm = function() {
         $scope.currentModel = {
-            updatedBy: 'Current User',
-            modelValidatorName: ''
+            updatedBy: 'Current User'
         };
         $scope.isEditing = false;
         $scope.currentView = 'form';
