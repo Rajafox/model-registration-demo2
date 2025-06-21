@@ -73,7 +73,7 @@ public class ModelService {
         dto.setModelId(model.getModelId());
         dto.setModelName(model.getModelName());
         dto.setModelVersion(model.getModelVersion());
-        dto.setModelSponsor(model.getModelSponsor());
+        dto.setModelSponsor(model.getModelSponsor());        dto.setModelValidatorName(model.getModelValidatorName());
         dto.setBusinessLine(model.getBusinessLine());
         dto.setModelType(model.getModelType());
         dto.setRiskRating(model.getRiskRating());
