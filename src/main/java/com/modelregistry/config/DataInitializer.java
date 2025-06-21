@@ -22,32 +22,68 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void createSampleData() {
-        Model[] sampleModels = {
-            new Model("Credit Scoring Model", "v1.0", "John Smith", 
-                     "Retail Banking", "Credit Risk", "High", "Production", "Admin"),
-            new Model("Market Risk Calculator", "v2.1", "Jane Doe", 
-                     "Investment Banking", "Market Risk", "Medium", "Validated", "Admin"),
-            new Model("AML Detection System", "v1.5", "Mike Johnson", 
-                     "Risk Management", "AML", "High", "Production", "Admin"),
-            new Model("Capital Adequacy Model", "v3.0", "Sarah Wilson", 
-                     "Wholesale Lending", "Capital Calculation", "Low", "In Development", "Admin"),
-            new Model("Operational Risk Framework", "v1.2", "David Brown", 
-                     "Risk Management", "Operational Risk", "Medium", "Draft", "Admin"),
-            new Model("Valuation Model", "v2.0", "Lisa Davis", 
-                     "Investment Banking", "Valuation", "High", "Validated", "Admin"),
-            new Model("Retail Credit Model", "v1.8", "Tom Anderson", 
-                     "Retail Banking", "Credit Risk", "Medium", "Production", "Admin"),
-            new Model("Liquidity Risk Model", "v1.0", "Emma Thompson", 
-                     "Wholesale Lending", "Market Risk", "Low", "Draft", "Admin"),
-            new Model("Fraud Detection Model", "v2.5", "Chris Martinez", 
-                     "Retail Banking", "AML", "High", "Production", "Admin"),
-            new Model("Portfolio Valuation", "v1.3", "Alex Garcia", 
-                     "Investment Banking", "Valuation", "Medium", "Retired", "Admin")
-        };
+        // Sample data for testing
+        Model model1 = new Model();
+        model1.setModelName("Credit Scoring Model");
+        model1.setModelVersion("v1.0");
+        model1.setModelSponsor("John Doe");
+        model1.setBusinessLine("Retail Banking");
+        model1.setModelType("Credit Risk");
+        model1.setRiskRating("High");
+        model1.setStatus("Production");
+        model1.setUpdatedBy("Admin");
+        model1.setUpdatedOn(LocalDateTime.now());
 
-        for (Model model : sampleModels) {
-            model.setUpdatedOn(LocalDateTime.now().minusDays((long) (Math.random() * 30)));
-            modelRepository.save(model);
-        }
+        Model model2 = new Model();
+        model2.setModelName("Market Risk Assessment");
+        model2.setModelVersion("v2.1");
+        model2.setModelSponsor("Jane Smith");
+        model2.setBusinessLine("Investment Banking");
+        model2.setModelType("Market Risk");
+        model2.setRiskRating("Medium");
+        model2.setStatus("Validated");
+        model2.setUpdatedBy("Risk Manager");
+        model2.setUpdatedOn(LocalDateTime.now());
+
+        Model model3 = new Model();
+        model3.setModelName("AML Detection System");
+        model3.setModelVersion("v1.5");
+        model3.setModelSponsor("Mike Johnson");
+        model3.setBusinessLine("Risk Management");
+        model3.setModelType("AML");
+        model3.setRiskRating("High");
+        model3.setStatus("In Development");
+        model3.setUpdatedBy("Compliance Team");
+        model3.setUpdatedOn(LocalDateTime.now());
+
+        Model model4 = new Model();
+        model4.setModelName("Capital Calculation Engine");
+        model4.setModelVersion("v3.0");
+        model4.setModelSponsor("Sarah Wilson");
+        model4.setBusinessLine("Wholesale Lending");
+        model4.setModelType("Capital Calculation");
+        model4.setRiskRating("Low");
+        model4.setStatus("Draft");
+        model4.setUpdatedBy("Finance Team");
+        model4.setUpdatedOn(LocalDateTime.now());
+
+        Model model5 = new Model();
+        model5.setModelName("Operational Risk Model");
+        model5.setModelVersion("v1.2");
+        model5.setModelSponsor("David Brown");
+        model5.setBusinessLine("Risk Management");
+        model5.setModelType("Operational Risk");
+        model5.setRiskRating("Medium");
+        model5.setStatus("Retired");
+        model5.setUpdatedBy("Operations");
+        model5.setUpdatedOn(LocalDateTime.now());
+
+        modelRepository.save(model1);
+        modelRepository.save(model2);
+        modelRepository.save(model3);
+        modelRepository.save(model4);
+        modelRepository.save(model5);
+
+        System.out.println("Sample data initialized successfully!");
     }
 }
