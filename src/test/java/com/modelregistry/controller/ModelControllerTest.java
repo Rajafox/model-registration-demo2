@@ -131,7 +131,7 @@ class ModelControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(testModelDTO)))
                 .andExpect(status().isOk())
-                .andExpected(jsonPath("$.modelName").value("Test Model"));
+                .andExpect(jsonPath("$.modelName").value("Test Model"));
 
         verify(modelService, times(1)).updateModel(anyLong(), any(ModelDTO.class));
     }
