@@ -28,6 +28,11 @@ public class Model {
     @Column(nullable = false)
     private String modelSponsor;
 
+    @NotBlank(message = "Model validator name is required")
+    @Size(max = 255, message = "Model validator name must not exceed 255 characters")
+    @Column(nullable = false)
+    private String modelValidatorName;
+
     @NotBlank(message = "Business line is required")
     @Column(nullable = false)
     private String businessLine;
@@ -63,11 +68,12 @@ public class Model {
     public Model() {}
 
     public Model(String modelName, String modelVersion, String modelSponsor, 
-                String businessLine, String modelType, String riskRating, 
+                String modelValidatorName, String businessLine, String modelType, String riskRating, 
                 String status, String updatedBy) {
         this.modelName = modelName;
         this.modelVersion = modelVersion;
         this.modelSponsor = modelSponsor;
+        this.modelValidatorName = modelValidatorName;
         this.businessLine = businessLine;
         this.modelType = modelType;
         this.riskRating = riskRating;
@@ -88,6 +94,9 @@ public class Model {
 
     public String getModelSponsor() { return modelSponsor; }
     public void setModelSponsor(String modelSponsor) { this.modelSponsor = modelSponsor; }
+
+    public String getModelValidatorName() { return modelValidatorName; }
+    public void setModelValidatorName(String modelValidatorName) { this.modelValidatorName = modelValidatorName; }
 
     public String getBusinessLine() { return businessLine; }
     public void setBusinessLine(String businessLine) { this.businessLine = businessLine; }
