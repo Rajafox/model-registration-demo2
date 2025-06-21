@@ -98,49 +98,124 @@
                     </div>
                 </div>
 
+                <!-- Page Size Selector -->
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Page Size:</label>
+                        <select class="form-select" ng-model="pagination.pageSize" ng-change="changePageSize()">
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                        </select>
+                    </div>
+                    <div class="col-md-9 d-flex align-items-end">
+                        <span class="text-muted">
+                            Showing {{pagination.currentPage * pagination.pageSize + 1}} to 
+                            {{Math.min((pagination.currentPage + 1) * pagination.pageSize, pagination.totalElements)}} 
+                            of {{pagination.totalElements}} entries
+                        </span>
+                    </div>
+                </div>
+
                 <!-- Table -->
                 <div class="table-responsive">
                     <table class="table table-striped table-hover">
                         <thead class="table-dark">
                             <tr>
                                 <th ng-click="sortBy('modelId')" class="sortable">
-                                    Model ID <i class="fas fa-sort"></i>
+                                    Model ID 
+                                    <i class="fas" ng-class="{
+                                        'fa-sort-up': sortField === 'modelId' && !reverse,
+                                        'fa-sort-down': sortField === 'modelId' && reverse,
+                                        'fa-sort': sortField !== 'modelId'
+                                    }"></i>
                                 </th>
                                 <th ng-click="sortBy('modelName')" class="sortable">
-                                    Model Name <i class="fas fa-sort"></i>
+                                    Model Name 
+                                    <i class="fas" ng-class="{
+                                        'fa-sort-up': sortField === 'modelName' && !reverse,
+                                        'fa-sort-down': sortField === 'modelName' && reverse,
+                                        'fa-sort': sortField !== 'modelName'
+                                    }"></i>
                                 </th>
                                 <th ng-click="sortBy('modelVersion')" class="sortable">
-                                    Model Version <i class="fas fa-sort"></i>
+                                    Model Version 
+                                    <i class="fas" ng-class="{
+                                        'fa-sort-up': sortField === 'modelVersion' && !reverse,
+                                        'fa-sort-down': sortField === 'modelVersion' && reverse,
+                                        'fa-sort': sortField !== 'modelVersion'
+                                    }"></i>
                                 </th>
                                 <th ng-click="sortBy('modelSponsor')" class="sortable">
-                                    Model Sponsor <i class="fas fa-sort"></i>
+                                    Model Sponsor 
+                                    <i class="fas" ng-class="{
+                                        'fa-sort-up': sortField === 'modelSponsor' && !reverse,
+                                        'fa-sort-down': sortField === 'modelSponsor' && reverse,
+                                        'fa-sort': sortField !== 'modelSponsor'
+                                    }"></i>
                                 </th>
                                 <th ng-click="sortBy('modelValidatorName')" class="sortable">
-                                    Model Validator Name <i class="fas fa-sort"></i>
+                                    Model Validator Name 
+                                    <i class="fas" ng-class="{
+                                        'fa-sort-up': sortField === 'modelValidatorName' && !reverse,
+                                        'fa-sort-down': sortField === 'modelValidatorName' && reverse,
+                                        'fa-sort': sortField !== 'modelValidatorName'
+                                    }"></i>
                                 </th>
                                 <th ng-click="sortBy('businessLine')" class="sortable">
-                                    Business Line <i class="fas fa-sort"></i>
+                                    Business Line 
+                                    <i class="fas" ng-class="{
+                                        'fa-sort-up': sortField === 'businessLine' && !reverse,
+                                        'fa-sort-down': sortField === 'businessLine' && reverse,
+                                        'fa-sort': sortField !== 'businessLine'
+                                    }"></i>
                                 </th>
                                 <th ng-click="sortBy('modelType')" class="sortable">
-                                    Model Type <i class="fas fa-sort"></i>
+                                    Model Type 
+                                    <i class="fas" ng-class="{
+                                        'fa-sort-up': sortField === 'modelType' && !reverse,
+                                        'fa-sort-down': sortField === 'modelType' && reverse,
+                                        'fa-sort': sortField !== 'modelType'
+                                    }"></i>
                                 </th>
                                 <th ng-click="sortBy('riskRating')" class="sortable">
-                                    Risk Rating <i class="fas fa-sort"></i>
+                                    Risk Rating 
+                                    <i class="fas" ng-class="{
+                                        'fa-sort-up': sortField === 'riskRating' && !reverse,
+                                        'fa-sort-down': sortField === 'riskRating' && reverse,
+                                        'fa-sort': sortField !== 'riskRating'
+                                    }"></i>
                                 </th>
                                 <th ng-click="sortBy('status')" class="sortable">
-                                    Status <i class="fas fa-sort"></i>
+                                    Status 
+                                    <i class="fas" ng-class="{
+                                        'fa-sort-up': sortField === 'status' && !reverse,
+                                        'fa-sort-down': sortField === 'status' && reverse,
+                                        'fa-sort': sortField !== 'status'
+                                    }"></i>
                                 </th>
                                 <th ng-click="sortBy('updatedBy')" class="sortable">
-                                    Updated By <i class="fas fa-sort"></i>
+                                    Updated By 
+                                    <i class="fas" ng-class="{
+                                        'fa-sort-up': sortField === 'updatedBy' && !reverse,
+                                        'fa-sort-down': sortField === 'updatedBy' && reverse,
+                                        'fa-sort': sortField !== 'updatedBy'
+                                    }"></i>
                                 </th>
                                 <th ng-click="sortBy('updatedOn')" class="sortable">
-                                    Updated On <i class="fas fa-sort"></i>
+                                    Updated On 
+                                    <i class="fas" ng-class="{
+                                        'fa-sort-up': sortField === 'updatedOn' && !reverse,
+                                        'fa-sort-down': sortField === 'updatedOn' && reverse,
+                                        'fa-sort': sortField !== 'updatedOn'
+                                    }"></i>
                                 </th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="model in models | orderBy:sortField:reverse">
+                            <tr ng-repeat="model in models">
                                 <td>{{model.modelId}}</td>
                                 <td>{{model.modelName}}</td>
                                 <td>{{model.modelVersion}}</td>
@@ -177,6 +252,41 @@
                             </tr>
                         </tbody>
                     </table>
+                </div>
+
+                <!-- Pagination Controls -->
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div>
+                        <button class="btn btn-outline-primary me-1" 
+                                ng-click="goToPage(0)" 
+                                ng-disabled="pagination.first">
+                            <i class="fas fa-angle-double-left"></i> First
+                        </button>
+                        <button class="btn btn-outline-primary me-1" 
+                                ng-click="goToPage(pagination.currentPage - 1)" 
+                                ng-disabled="pagination.first">
+                            <i class="fas fa-angle-left"></i> Previous
+                        </button>
+                    </div>
+                    
+                    <div class="d-flex align-items-center">
+                        <span class="me-2">Page</span>
+                        <span class="badge bg-primary me-2">{{pagination.currentPage + 1}}</span>
+                        <span class="me-2">of {{pagination.totalPages}}</span>
+                    </div>
+                    
+                    <div>
+                        <button class="btn btn-outline-primary me-1" 
+                                ng-click="goToPage(pagination.currentPage + 1)" 
+                                ng-disabled="pagination.last">
+                            Next <i class="fas fa-angle-right"></i>
+                        </button>
+                        <button class="btn btn-outline-primary" 
+                                ng-click="goToPage(pagination.totalPages - 1)" 
+                                ng-disabled="pagination.last">
+                            Last <i class="fas fa-angle-double-right"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

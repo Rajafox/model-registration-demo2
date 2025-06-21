@@ -7,6 +7,14 @@ angular.module('modelRegistryApp', [])
     $scope.isEditing = false;
     $scope.sortField = 'modelId';
     $scope.reverse = false;
+    $scope.pagination = {
+        currentPage: 0,
+        pageSize: 5,
+        totalElements: 0,
+        totalPages: 0,
+        first: true,
+        last: true
+    };
     $scope.filters = {
         modelName: '',
         modelVersion: '',
@@ -19,11 +27,21 @@ angular.module('modelRegistryApp', [])
         updatedBy: ''
     };
 
-    // Load all models
-    $scope.loadModels = function() {
-        $http.get('/api/models')
+    // Load all models with pagination
+    $scope.loadModels = function(page) {
+        page = page || 0;
+        var sortDirection = $scope.reverse ? 'desc' : 'asc';
+        var url = '/api/models?page=' + page + '&size=' + $scope.pagination.pageSize + 
+                  '&sort=' + $scope.sortField + '&direction=' + sortDirection;
+        
+        $http.get(url)
             .then(function(response) {
-                $scope.models = response.data;
+                $scope.models = response.data.content;
+                $scope.pagination.currentPage = response.data.number;
+                $scope.pagination.totalElements = response.data.totalElements;
+                $scope.pagination.totalPages = response.data.totalPages;
+                $scope.pagination.first = response.data.first;
+                $scope.pagination.last = response.data.last;
             })
             .catch(function(error) {
                 console.error('Error loading models:', error);
@@ -31,8 +49,9 @@ angular.module('modelRegistryApp', [])
             });
     };
 
-    // Apply filters
-    $scope.applyFilters = function() {
+    // Apply filters with pagination
+    $scope.applyFilters = function(page) {
+        page = page || 0;
         var params = {};
         
         if ($scope.filters.modelName) params.modelName = $scope.filters.modelName;
@@ -45,12 +64,23 @@ angular.module('modelRegistryApp', [])
         if ($scope.filters.status) params.status = $scope.filters.status;
         if ($scope.filters.updatedBy) params.updatedBy = $scope.filters.updatedBy;
 
+        // Add pagination and sorting parameters
+        params.page = page;
+        params.size = $scope.pagination.pageSize;
+        params.sort = $scope.sortField;
+        params.direction = $scope.reverse ? 'desc' : 'asc';
+
         var paramString = Object.keys(params).map(key => key + '=' + encodeURIComponent(params[key])).join('&');
-        var url = '/api/models/filter' + (paramString ? '?' + paramString : '');
+        var url = '/api/models/filter?' + paramString;
 
         $http.get(url)
             .then(function(response) {
-                $scope.models = response.data;
+                $scope.models = response.data.content;
+                $scope.pagination.currentPage = response.data.number;
+                $scope.pagination.totalElements = response.data.totalElements;
+                $scope.pagination.totalPages = response.data.totalPages;
+                $scope.pagination.first = response.data.first;
+                $scope.pagination.last = response.data.last;
             })
             .catch(function(error) {
                 console.error('Error filtering models:', error);
@@ -58,13 +88,42 @@ angular.module('modelRegistryApp', [])
             });
     };
 
-    // Sort by field
+    // Sort by field with pagination
     $scope.sortBy = function(field) {
         if ($scope.sortField === field) {
             $scope.reverse = !$scope.reverse;
         } else {
             $scope.sortField = field;
             $scope.reverse = false;
+        }
+        // Check if any filters are active
+        var hasFilters = Object.keys($scope.filters).some(key => $scope.filters[key]);
+        if (hasFilters) {
+            $scope.applyFilters($scope.pagination.currentPage);
+        } else {
+            $scope.loadModels($scope.pagination.currentPage);
+        }
+    };
+
+    // Pagination functions
+    $scope.goToPage = function(page) {
+        if (page >= 0 && page < $scope.pagination.totalPages) {
+            var hasFilters = Object.keys($scope.filters).some(key => $scope.filters[key]);
+            if (hasFilters) {
+                $scope.applyFilters(page);
+            } else {
+                $scope.loadModels(page);
+            }
+        }
+    };
+
+    $scope.changePageSize = function() {
+        $scope.pagination.currentPage = 0;
+        var hasFilters = Object.keys($scope.filters).some(key => $scope.filters[key]);
+        if (hasFilters) {
+            $scope.applyFilters(0);
+        } else {
+            $scope.loadModels(0);
         }
     };
 
@@ -93,7 +152,7 @@ angular.module('modelRegistryApp', [])
                 .then(function(response) {
                     alert('Model updated successfully!');
                     $scope.currentView = 'grid';
-                    $scope.loadModels();
+                    $scope.loadModels($scope.pagination.currentPage);
                 })
                 .catch(function(error) {
                     console.error('Error updating model:', error);
@@ -106,7 +165,7 @@ angular.module('modelRegistryApp', [])
                 .then(function(response) {
                     alert('Model created successfully!');
                     $scope.currentView = 'grid';
-                    $scope.loadModels();
+                    $scope.loadModels(0);
                 })
                 .catch(function(error) {
                     console.error('Error creating model:', error);
@@ -121,7 +180,7 @@ angular.module('modelRegistryApp', [])
             .then(function(response) {
                 alert('Model saved as draft successfully!');
                 $scope.currentView = 'grid';
-                $scope.loadModels();
+                $scope.loadModels(0);
             })
             .catch(function(error) {
                 console.error('Error saving draft:', error);
@@ -135,7 +194,7 @@ angular.module('modelRegistryApp', [])
             $http.delete('/api/models/' + modelId)
                 .then(function(response) {
                     alert('Model deleted successfully!');
-                    $scope.loadModels();
+                    $scope.loadModels($scope.pagination.currentPage);
                 })
                 .catch(function(error) {
                     console.error('Error deleting model:', error);

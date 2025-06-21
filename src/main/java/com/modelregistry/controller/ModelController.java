@@ -10,6 +10,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,14 +29,21 @@ public class ModelController {
     @Autowired
     private ModelService modelService;
 
-    @Operation(summary = "Get all models", description = "Retrieve a list of all models in the registry")
+    @Operation(summary = "Get all models", description = "Retrieve a paginated list of all models in the registry")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Successfully retrieved all models"),
         @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping
-    public ResponseEntity<List<ModelDTO>> getAllModels() {
-        List<ModelDTO> models = modelService.getAllModels();
+    public ResponseEntity<Page<ModelDTO>> getAllModels(
+            @Parameter(description = "Page number (0-based)") @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "Page size") @RequestParam(defaultValue = "5") int size,
+            @Parameter(description = "Sort field") @RequestParam(defaultValue = "modelId") String sort,
+            @Parameter(description = "Sort direction") @RequestParam(defaultValue = "asc") String direction) {
+        
+        Sort.Direction sortDirection = direction.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sort));
+        Page<ModelDTO> models = modelService.getAllModels(pageable);
         return ResponseEntity.ok(models);
     }
 
@@ -107,13 +118,13 @@ public class ModelController {
                         ResponseEntity.notFound().build();
     }
 
-    @Operation(summary = "Filter models", description = "Retrieve models based on filter criteria")
+    @Operation(summary = "Filter models", description = "Retrieve models based on filter criteria with pagination")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Successfully retrieved filtered models"),
         @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/filter")
-    public ResponseEntity<List<ModelDTO>> getFilteredModels(
+    public ResponseEntity<Page<ModelDTO>> getFilteredModels(
             @Parameter(description = "Filter by model name") @RequestParam(required = false) String modelName,
             @Parameter(description = "Filter by model version") @RequestParam(required = false) String modelVersion,
             @Parameter(description = "Filter by model sponsor") @RequestParam(required = false) String modelSponsor,
@@ -122,11 +133,17 @@ public class ModelController {
             @Parameter(description = "Filter by model type") @RequestParam(required = false) String modelType,
             @Parameter(description = "Filter by risk rating") @RequestParam(required = false) String riskRating,
             @Parameter(description = "Filter by status") @RequestParam(required = false) String status,
-            @Parameter(description = "Filter by updated by") @RequestParam(required = false) String updatedBy) {
+            @Parameter(description = "Filter by updated by") @RequestParam(required = false) String updatedBy,
+            @Parameter(description = "Page number (0-based)") @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "Page size") @RequestParam(defaultValue = "5") int size,
+            @Parameter(description = "Sort field") @RequestParam(defaultValue = "modelId") String sort,
+            @Parameter(description = "Sort direction") @RequestParam(defaultValue = "asc") String direction) {
         
-        List<ModelDTO> models = modelService.getFilteredModels(
+        Sort.Direction sortDirection = direction.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sort));
+        Page<ModelDTO> models = modelService.getFilteredModels(
             modelName, modelVersion, modelSponsor, modelValidatorName, businessLine, 
-            modelType, riskRating, status, updatedBy);
+            modelType, riskRating, status, updatedBy, pageable);
         return ResponseEntity.ok(models);
     }
 }
