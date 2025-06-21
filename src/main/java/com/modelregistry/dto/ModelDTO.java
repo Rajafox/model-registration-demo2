@@ -41,11 +41,12 @@ public class ModelDTO {
     public ModelDTO() {}
 
     public ModelDTO(String modelName, String modelVersion, String modelSponsor, 
-                   String businessLine, String modelType, String riskRating, 
+                   String modelValidatorName, String businessLine, String modelType, String riskRating, 
                    String status, String updatedBy) {
         this.modelName = modelName;
         this.modelVersion = modelVersion;
         this.modelSponsor = modelSponsor;
+        this.modelValidatorName = modelValidatorName;
         this.businessLine = businessLine;
         this.modelType = modelType;
         this.riskRating = riskRating;
