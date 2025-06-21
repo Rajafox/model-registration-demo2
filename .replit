@@ -4,3 +4,19 @@ entrypoint = "README.md"
 [nix]
 channel = "stable-24_05"
 packages = ["cowsay","openjdk17","nodejs_20","maven"]
+
+[workflows]
+runButton = "Run Spring Boot App"
+
+[[workflows.workflow]]
+name = "Run Spring Boot App"
+author = 43933978
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "mvn clean compile"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "mvn spring-boot:run"
