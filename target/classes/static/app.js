@@ -2,15 +2,18 @@
 (function() {
     'use strict';
 
+    // Wait for Angular to be loaded
+    if (typeof ng === 'undefined') {
+        console.error('Angular not loaded');
+        return;
+    }
+
     const { Component, OnInit, Injectable, bootstrapApplication } = ng.core;
     const { CommonModule } = ng.common;
-    const { ReactiveFormsModule, FormBuilder, FormGroup, Validators } = ng.forms;
-    const { HttpClient, HttpClientModule, provideHttpClient } = ng.common.http;
+    const { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, Validators } = ng.forms;
+    const { HttpClient, provideHttpClient } = ng.common.http;
 
     // Service for Model operations
-    @Injectable({
-        providedIn: 'root'
-    })
     class ModelService {
         constructor(http) {
             this.http = http;
@@ -52,14 +55,251 @@
             return this.http.delete(`/api/models/${id}`);
         }
     }
-    ModelService.ɵfac = function ModelService_Factory(t) { return new (t || ModelService)(ng.core.ɵɵinject(ng.common.http.HttpClient)); };
-    ModelService.ɵprov = ng.core.ɵɵdefineInjectable({ token: ModelService, factory: ModelService.ɵfac, providedIn: 'root' });
+
+    // Define service as Injectable
+    ModelService.ɵfac = function ModelService_Factory(t) { 
+        return new (t || ModelService)(ng.core.ɵɵinject(HttpClient)); 
+    };
+    ModelService.ɵprov = ng.core.ɵɵdefineInjectable({ 
+        token: ModelService, 
+        factory: ModelService.ɵfac, 
+        providedIn: 'root' 
+    });
 
     // Main Component
-    @Component({
-        selector: 'model-registry-app',
+    class ModelRegistryComponent {
+        constructor(modelService, fb) {
+            this.modelService = modelService;
+            this.fb = fb;
+            this.models = [];
+            this.currentView = 'grid';
+            this.isEditing = false;
+            this.sortField = 'modelId';
+            this.reverse = false;
+            this.Math = Math;
+            
+            this.pagination = {
+                currentPage: 0,
+                pageSize: 5,
+                totalElements: 0,
+                totalPages: 0,
+                first: true,
+                last: true
+            };
+            
+            this.filters = {
+                modelName: '',
+                modelVersion: '',
+                modelSponsor: '',
+                modelValidatorName: '',
+                businessLine: '',
+                modelType: '',
+                riskRating: '',
+                status: '',
+                updatedBy: ''
+            };
+
+            this.initializeForm();
+        }
+
+        ngOnInit() {
+            this.loadModels();
+        }
+
+        initializeForm() {
+            this.modelForm = this.fb.group({
+                modelId: [''],
+                modelName: ['', Validators.required],
+                modelVersion: ['', Validators.required],
+                modelSponsor: ['', Validators.required],
+                modelValidatorName: ['', Validators.required],
+                businessLine: ['', Validators.required],
+                modelType: ['', Validators.required],
+                riskRating: ['', Validators.required],
+                status: [''],
+                updatedBy: ['Current User']
+            });
+        }
+
+        loadModels(page = 0) {
+            const sortDirection = this.reverse ? 'desc' : 'asc';
+            this.modelService.getAllModels(page, this.pagination.pageSize, this.sortField, sortDirection)
+                .subscribe({
+                    next: (response) => {
+                        this.models = response.content;
+                        this.updatePagination(response);
+                    },
+                    error: (error) => {
+                        console.error('Error loading models:', error);
+                        alert('Failed to load models');
+                    }
+                });
+        }
+
+        applyFilters(page = 0) {
+            const sortDirection = this.reverse ? 'desc' : 'asc';
+            this.modelService.getFilteredModels(this.filters, page, this.pagination.pageSize, this.sortField, sortDirection)
+                .subscribe({
+                    next: (response) => {
+                        this.models = response.content;
+                        this.updatePagination(response);
+                    },
+                    error: (error) => {
+                        console.error('Error filtering models:', error);
+                        alert('Failed to filter models');
+                    }
+                });
+        }
+
+        updatePagination(response) {
+            this.pagination.currentPage = response.number;
+            this.pagination.totalElements = response.totalElements;
+            this.pagination.totalPages = response.totalPages;
+            this.pagination.first = response.first;
+            this.pagination.last = response.last;
+        }
+
+        sortBy(field) {
+            if (this.sortField === field) {
+                this.reverse = !this.reverse;
+            } else {
+                this.sortField = field;
+                this.reverse = false;
+            }
+            
+            const hasFilters = Object.values(this.filters).some(filter => filter);
+            if (hasFilters) {
+                this.applyFilters(this.pagination.currentPage);
+            } else {
+                this.loadModels(this.pagination.currentPage);
+            }
+        }
+
+        goToPage(page) {
+            if (page >= 0 && page < this.pagination.totalPages) {
+                const hasFilters = Object.values(this.filters).some(filter => filter);
+                if (hasFilters) {
+                    this.applyFilters(page);
+                } else {
+                    this.loadModels(page);
+                }
+            }
+        }
+
+        changePageSize() {
+            this.pagination.currentPage = 0;
+            const hasFilters = Object.values(this.filters).some(filter => filter);
+            if (hasFilters) {
+                this.applyFilters(0);
+            } else {
+                this.loadModels(0);
+            }
+        }
+
+        showCreateForm() {
+            this.initializeForm();
+            this.modelForm.patchValue({
+                updatedBy: 'Current User',
+                modelValidatorName: ''
+            });
+            this.isEditing = false;
+            this.currentView = 'form';
+        }
+
+        editModel(model) {
+            this.initializeForm();
+            this.modelForm.patchValue(model);
+            this.isEditing = true;
+            this.currentView = 'form';
+        }
+
+        saveModel() {
+            if (this.modelForm.valid) {
+                const formValue = this.modelForm.value;
+                
+                if (this.isEditing) {
+                    this.modelService.updateModel(formValue.modelId, formValue)
+                        .subscribe({
+                            next: (response) => {
+                                alert('Model updated successfully!');
+                                this.currentView = 'grid';
+                                this.loadModels(this.pagination.currentPage);
+                            },
+                            error: (error) => {
+                                console.error('Error updating model:', error);
+                                alert('Failed to update model');
+                            }
+                        });
+                } else {
+                    formValue.status = 'In Development';
+                    this.modelService.createModel(formValue)
+                        .subscribe({
+                            next: (response) => {
+                                alert('Model created successfully!');
+                                this.currentView = 'grid';
+                                this.loadModels(0);
+                            },
+                            error: (error) => {
+                                console.error('Error creating model:', error);
+                                alert('Failed to create model');
+                            }
+                        });
+                }
+            }
+        }
+
+        saveDraft() {
+            const formValue = this.modelForm.value;
+            this.modelService.createDraftModel(formValue)
+                .subscribe({
+                    next: (response) => {
+                        alert('Model saved as draft successfully!');
+                        this.currentView = 'grid';
+                        this.loadModels(0);
+                    },
+                    error: (error) => {
+                        console.error('Error saving draft:', error);
+                        alert('Failed to save draft');
+                    }
+                });
+        }
+
+        deleteModel(modelId) {
+            if (confirm('Are you sure you want to delete this model?')) {
+                this.modelService.deleteModel(modelId)
+                    .subscribe({
+                        next: (response) => {
+                            alert('Model deleted successfully!');
+                            this.loadModels(this.pagination.currentPage);
+                        },
+                        error: (error) => {
+                            console.error('Error deleting model:', error);
+                            alert('Failed to delete model');
+                        }
+                    });
+            }
+        }
+
+        cancelForm() {
+            this.currentView = 'grid';
+            this.initializeForm();
+        }
+    }
+
+    // Define component
+    ModelRegistryComponent.ɵfac = function ModelRegistryComponent_Factory(t) { 
+        return new (t || ModelRegistryComponent)(
+            ng.core.ɵɵdirectiveInject(ModelService), 
+            ng.core.ɵɵdirectiveInject(ng.forms.FormBuilder)
+        ); 
+    };
+    
+    ModelRegistryComponent.ɵcmp = ng.core.ɵɵdefineComponent({
+        type: ModelRegistryComponent,
+        selectors: [["model-registry-app"]],
         standalone: true,
-        imports: [CommonModule, ReactiveFormsModule],
+        features: [ng.core.ɵɵStandaloneFeature],
+        imports: [CommonModule, ReactiveFormsModule, FormsModule],
         template: `
             <div class="container-fluid">
                 <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
@@ -498,243 +738,6 @@
                 </div>
             </div>
         `
-    })
-    class ModelRegistryComponent {
-        models = [];
-        currentView = 'grid';
-        isEditing = false;
-        sortField = 'modelId';
-        reverse = false;
-        modelForm;
-        Math = Math;
-        
-        pagination = {
-            currentPage: 0,
-            pageSize: 5,
-            totalElements: 0,
-            totalPages: 0,
-            first: true,
-            last: true
-        };
-        
-        filters = {
-            modelName: '',
-            modelVersion: '',
-            modelSponsor: '',
-            modelValidatorName: '',
-            businessLine: '',
-            modelType: '',
-            riskRating: '',
-            status: '',
-            updatedBy: ''
-        };
-
-        constructor(modelService, fb) {
-            this.modelService = modelService;
-            this.fb = fb;
-            this.initializeForm();
-        }
-
-        ngOnInit() {
-            this.loadModels();
-        }
-
-        initializeForm() {
-            this.modelForm = this.fb.group({
-                modelId: [''],
-                modelName: ['', Validators.required],
-                modelVersion: ['', Validators.required],
-                modelSponsor: ['', Validators.required],
-                modelValidatorName: ['', Validators.required],
-                businessLine: ['', Validators.required],
-                modelType: ['', Validators.required],
-                riskRating: ['', Validators.required],
-                status: [''],
-                updatedBy: ['Current User']
-            });
-        }
-
-        loadModels(page = 0) {
-            const sortDirection = this.reverse ? 'desc' : 'asc';
-            this.modelService.getAllModels(page, this.pagination.pageSize, this.sortField, sortDirection)
-                .subscribe({
-                    next: (response) => {
-                        this.models = response.content;
-                        this.updatePagination(response);
-                    },
-                    error: (error) => {
-                        console.error('Error loading models:', error);
-                        alert('Failed to load models');
-                    }
-                });
-        }
-
-        applyFilters(page = 0) {
-            const sortDirection = this.reverse ? 'desc' : 'asc';
-            this.modelService.getFilteredModels(this.filters, page, this.pagination.pageSize, this.sortField, sortDirection)
-                .subscribe({
-                    next: (response) => {
-                        this.models = response.content;
-                        this.updatePagination(response);
-                    },
-                    error: (error) => {
-                        console.error('Error filtering models:', error);
-                        alert('Failed to filter models');
-                    }
-                });
-        }
-
-        updatePagination(response) {
-            this.pagination.currentPage = response.number;
-            this.pagination.totalElements = response.totalElements;
-            this.pagination.totalPages = response.totalPages;
-            this.pagination.first = response.first;
-            this.pagination.last = response.last;
-        }
-
-        sortBy(field) {
-            if (this.sortField === field) {
-                this.reverse = !this.reverse;
-            } else {
-                this.sortField = field;
-                this.reverse = false;
-            }
-            
-            const hasFilters = Object.values(this.filters).some(filter => filter);
-            if (hasFilters) {
-                this.applyFilters(this.pagination.currentPage);
-            } else {
-                this.loadModels(this.pagination.currentPage);
-            }
-        }
-
-        goToPage(page) {
-            if (page >= 0 && page < this.pagination.totalPages) {
-                const hasFilters = Object.values(this.filters).some(filter => filter);
-                if (hasFilters) {
-                    this.applyFilters(page);
-                } else {
-                    this.loadModels(page);
-                }
-            }
-        }
-
-        changePageSize() {
-            this.pagination.currentPage = 0;
-            const hasFilters = Object.values(this.filters).some(filter => filter);
-            if (hasFilters) {
-                this.applyFilters(0);
-            } else {
-                this.loadModels(0);
-            }
-        }
-
-        showCreateForm() {
-            this.initializeForm();
-            this.modelForm.patchValue({
-                updatedBy: 'Current User',
-                modelValidatorName: ''
-            });
-            this.isEditing = false;
-            this.currentView = 'form';
-        }
-
-        editModel(model) {
-            this.initializeForm();
-            this.modelForm.patchValue(model);
-            this.isEditing = true;
-            this.currentView = 'form';
-        }
-
-        saveModel() {
-            if (this.modelForm.valid) {
-                const formValue = this.modelForm.value;
-                
-                if (this.isEditing) {
-                    this.modelService.updateModel(formValue.modelId, formValue)
-                        .subscribe({
-                            next: (response) => {
-                                alert('Model updated successfully!');
-                                this.currentView = 'grid';
-                                this.loadModels(this.pagination.currentPage);
-                            },
-                            error: (error) => {
-                                console.error('Error updating model:', error);
-                                alert('Failed to update model');
-                            }
-                        });
-                } else {
-                    formValue.status = 'In Development';
-                    this.modelService.createModel(formValue)
-                        .subscribe({
-                            next: (response) => {
-                                alert('Model created successfully!');
-                                this.currentView = 'grid';
-                                this.loadModels(0);
-                            },
-                            error: (error) => {
-                                console.error('Error creating model:', error);
-                                alert('Failed to create model');
-                            }
-                        });
-                }
-            }
-        }
-
-        saveDraft() {
-            const formValue = this.modelForm.value;
-            this.modelService.createDraftModel(formValue)
-                .subscribe({
-                    next: (response) => {
-                        alert('Model saved as draft successfully!');
-                        this.currentView = 'grid';
-                        this.loadModels(0);
-                    },
-                    error: (error) => {
-                        console.error('Error saving draft:', error);
-                        alert('Failed to save draft');
-                    }
-                });
-        }
-
-        deleteModel(modelId) {
-            if (confirm('Are you sure you want to delete this model?')) {
-                this.modelService.deleteModel(modelId)
-                    .subscribe({
-                        next: (response) => {
-                            alert('Model deleted successfully!');
-                            this.loadModels(this.pagination.currentPage);
-                        },
-                        error: (error) => {
-                            console.error('Error deleting model:', error);
-                            alert('Failed to delete model');
-                        }
-                    });
-            }
-        }
-
-        cancelForm() {
-            this.currentView = 'grid';
-            this.initializeForm();
-        }
-    }
-    ModelRegistryComponent.ɵfac = function ModelRegistryComponent_Factory(t) { 
-        return new (t || ModelRegistryComponent)(
-            ng.core.ɵɵdirectiveInject(ModelService), 
-            ng.core.ɵɵdirectiveInject(ng.forms.FormBuilder)
-        ); 
-    };
-    ModelRegistryComponent.ɵcmp = ng.core.ɵɵdefineComponent({
-        type: ModelRegistryComponent,
-        selectors: [["model-registry-app"]],
-        standalone: true,
-        features: [ng.core.ɵɵStandaloneFeature],
-        imports: [ng.common.CommonModule, ng.forms.ReactiveFormsModule, ng.forms.FormsModule],
-        decls: 1,
-        vars: 0,
-        template: function ModelRegistryComponent_Template(rf, ctx) {
-            // Template will be processed by Angular
-        }
     });
 
     // Bootstrap the application
