@@ -3,7 +3,7 @@ entrypoint = "README.md"
 
 [nix]
 channel = "stable-24_05"
-packages = ["cowsay","openjdk17","nodejs_20","maven","npm"]
+packages = ["cowsay","openjdk17","nodejs_20","maven"]
 
 [workflows]
 runButton = "Run Spring Boot App"
