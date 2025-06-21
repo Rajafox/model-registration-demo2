@@ -1,3 +1,4 @@
+
 package com.modelregistry.dto;
 
 import jakarta.validation.constraints.NotBlank;
@@ -6,31 +7,30 @@ import java.time.LocalDateTime;
 
 public class ModelDTO {
     private Long modelId;
-
+    
     @NotBlank(message = "Model name is required")
     @Size(max = 255, message = "Model name must not exceed 255 characters")
     private String modelName;
-
+    
     @NotBlank(message = "Model version is required")
     @Size(max = 50, message = "Model version must not exceed 50 characters")
     private String modelVersion;
-
+    
     @NotBlank(message = "Model sponsor is required")
+    @Size(max = 255, message = "Model sponsor must not exceed 255 characters")
     private String modelSponsor;
-
-    private String modelValidatorName;
-
+    
     @NotBlank(message = "Business line is required")
     private String businessLine;
-
+    
     @NotBlank(message = "Model type is required")
     private String modelType;
-
+    
     @NotBlank(message = "Risk rating is required")
     private String riskRating;
-
+    
     private String status;
-
+    
     private String updatedBy;
     private LocalDateTime updatedOn;
 
@@ -62,14 +62,6 @@ public class ModelDTO {
 
     public String getModelSponsor() { return modelSponsor; }
     public void setModelSponsor(String modelSponsor) { this.modelSponsor = modelSponsor; }
-
-    public String getModelValidatorName() {
-        return modelValidatorName;
-    }
-
-    public void setModelValidatorName(String modelValidatorName) {
-        this.modelValidatorName = modelValidatorName;
-    }
 
     public String getBusinessLine() { return businessLine; }
     public void setBusinessLine(String businessLine) { this.businessLine = businessLine; }

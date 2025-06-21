@@ -1,3 +1,4 @@
+
 package com.modelregistry.service;
 
 import com.modelregistry.dto.ModelDTO;
@@ -11,7 +12,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class ModelService {
-
+    
     @Autowired
     private ModelRepository modelRepository;
 
@@ -88,13 +89,11 @@ public class ModelService {
         model.setModelName(dto.getModelName());
         model.setModelVersion(dto.getModelVersion());
         model.setModelSponsor(dto.getModelSponsor());
-        model.setModelValidatorName(dto.getModelValidatorName());
         model.setBusinessLine(dto.getBusinessLine());
         model.setModelType(dto.getModelType());
         model.setRiskRating(dto.getRiskRating());
         // Set default status as Draft if no status provided
         model.setStatus(dto.getStatus() != null && !dto.getStatus().trim().isEmpty() ? dto.getStatus() : "Draft");
-        model.setModelValidatorName(dto.getModelValidatorName());
         model.setUpdatedBy(dto.getUpdatedBy());
         return model;
     }
@@ -103,7 +102,6 @@ public class ModelService {
         model.setModelName(dto.getModelName());
         model.setModelVersion(dto.getModelVersion());
         model.setModelSponsor(dto.getModelSponsor());
-		model.setModelValidatorName(dto.getModelValidatorName());
         model.setBusinessLine(dto.getBusinessLine());
         model.setModelType(dto.getModelType());
         model.setRiskRating(dto.getRiskRating());
