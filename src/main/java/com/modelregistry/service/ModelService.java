@@ -94,6 +94,7 @@ public class ModelService {
         model.setRiskRating(dto.getRiskRating());
         // Set default status as Draft if no status provided
         model.setStatus(dto.getStatus() != null && !dto.getStatus().trim().isEmpty() ? dto.getStatus() : "Draft");
+        model.setModelValidatorName(dto.getModelValidatorName());
         model.setUpdatedBy(dto.getUpdatedBy());
         return model;
     }
