@@ -21,6 +21,32 @@ args = "mvn clean compile"
 task = "shell.exec"
 args = "mvn spring-boot:run"
 
+[[workflows.workflow]]
+name = "Build Angular App"
+author = 43933978
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm install"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run build"
+
+[[workflows.workflow]]
+name = "Run Angular Dev Server"
+author = 43933978
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm install"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run start"
+
 [[ports]]
 localPort = 5000
 externalPort = 80
