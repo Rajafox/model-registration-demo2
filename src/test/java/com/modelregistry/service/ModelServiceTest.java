@@ -39,6 +39,7 @@ class ModelServiceTest {
         testModel.setModelName("Test Model");
         testModel.setModelVersion("v1.0");
         testModel.setModelSponsor("Test Sponsor");
+        testModel.setModelValidatorName("Test Validator");
         testModel.setBusinessLine("Retail Banking");
         testModel.setModelType("Credit Risk");
         testModel.setRiskRating("High");
@@ -50,6 +51,7 @@ class ModelServiceTest {
         testModelDTO.setModelName("Test Model");
         testModelDTO.setModelVersion("v1.0");
         testModelDTO.setModelSponsor("Test Sponsor");
+        testModelDTO.setModelValidatorName("Test Validator");
         testModelDTO.setBusinessLine("Retail Banking");
         testModelDTO.setModelType("Credit Risk");
         testModelDTO.setRiskRating("High");
@@ -192,17 +194,17 @@ class ModelServiceTest {
     @Test
     void getFilteredModels_ShouldReturnFilteredResults() {
         // Given
-        when(modelRepository.findByFilters(any(), any(), any(), any(), any(), any(), any(), any()))
+        when(modelRepository.findByFilters(any(), any(), any(), any(), any(), any(), any(), any(), any()))
                 .thenReturn(Arrays.asList(testModel));
 
         // When
         List<ModelDTO> result = modelService.getFilteredModels(
-                "Test", "v1.0", "Sponsor", "Retail Banking", 
+                "Test", "v1.0", "Sponsor", "Test Validator", "Retail Banking", 
                 "Credit Risk", "High", "Production", "User");
 
         // Then
         assertNotNull(result);
         assertEquals(1, result.size());
-        verify(modelRepository, times(1)).findByFilters(any(), any(), any(), any(), any(), any(), any(), any());
+        verify(modelRepository, times(1)).findByFilters(any(), any(), any(), any(), any(), any(), any(), any(), any());
     }
 }

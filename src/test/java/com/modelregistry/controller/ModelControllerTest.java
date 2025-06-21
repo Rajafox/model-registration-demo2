@@ -42,6 +42,7 @@ class ModelControllerTest {
         testModelDTO.setModelName("Test Model");
         testModelDTO.setModelVersion("v1.0");
         testModelDTO.setModelSponsor("Test Sponsor");
+        testModelDTO.setModelValidatorName("Test Validator");
         testModelDTO.setBusinessLine("Retail Banking");
         testModelDTO.setModelType("Credit Risk");
         testModelDTO.setRiskRating("High");
@@ -177,16 +178,16 @@ class ModelControllerTest {
     @Test
     void getFilteredModels_ShouldReturnFilteredResults() throws Exception {
         // Given
-        when(modelService.getFilteredModels(any(), any(), any(), any(), any(), any(), any(), any()))
+        when(modelService.getFilteredModels(any(), any(), any(), any(), any(), any(), any(), any(), any()))
                 .thenReturn(Arrays.asList(testModelDTO));
 
         // When & Then
         mockMvc.perform(get("/api/models/filter")
                 .param("modelName", "Test")
                 .param("businessLine", "Retail Banking"))
-                .andExpect(status().isOk())
+                .andExpected(status().isOk())
                 .andExpect(jsonPath("$[0].modelName").value("Test Model"));
 
-        verify(modelService, times(1)).getFilteredModels(any(), any(), any(), any(), any(), any(), any(), any());
+        verify(modelService, times(1)).getFilteredModels(any(), any(), any(), any(), any(), any(), any(), any(), any());
     }
 }

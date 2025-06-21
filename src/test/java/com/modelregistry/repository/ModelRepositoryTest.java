@@ -30,6 +30,7 @@ class ModelRepositoryTest {
         testModel1.setModelName("Credit Risk Model");
         testModel1.setModelVersion("v1.0");
         testModel1.setModelSponsor("John Smith");
+        testModel1.setModelValidatorName("Credit Validator");
         testModel1.setBusinessLine("Retail Banking");
         testModel1.setModelType("Credit Risk");
         testModel1.setRiskRating("High");
@@ -41,6 +42,7 @@ class ModelRepositoryTest {
         testModel2.setModelName("Market Risk Model");
         testModel2.setModelVersion("v2.0");
         testModel2.setModelSponsor("Jane Doe");
+        testModel2.setModelValidatorName("Market Validator");
         testModel2.setBusinessLine("Investment Banking");
         testModel2.setModelType("Market Risk");
         testModel2.setRiskRating("Medium");
@@ -56,7 +58,7 @@ class ModelRepositoryTest {
     void findByFilters_WithModelName_ShouldReturnMatchingModels() {
         // When
         List<Model> result = modelRepository.findByFilters(
-                "Credit", null, null, null, null, null, null, null);
+                "Credit", null, null, null, null, null, null, null, null);
 
         // Then
         assertEquals(1, result.size());
@@ -67,7 +69,7 @@ class ModelRepositoryTest {
     void findByFilters_WithBusinessLine_ShouldReturnMatchingModels() {
         // When
         List<Model> result = modelRepository.findByFilters(
-                null, null, null, "Retail Banking", null, null, null, null);
+                null, null, null, null, "Retail Banking", null, null, null, null);
 
         // Then
         assertEquals(1, result.size());
@@ -78,7 +80,7 @@ class ModelRepositoryTest {
     void findByFilters_WithMultipleFilters_ShouldReturnMatchingModels() {
         // When
         List<Model> result = modelRepository.findByFilters(
-                null, null, null, "Investment Banking", "Market Risk", null, null, null);
+                null, null, null, null, "Investment Banking", "Market Risk", null, null, null);
 
         // Then
         assertEquals(1, result.size());
@@ -89,7 +91,7 @@ class ModelRepositoryTest {
     void findByFilters_WithNoFilters_ShouldReturnAllModels() {
         // When
         List<Model> result = modelRepository.findByFilters(
-                null, null, null, null, null, null, null, null);
+                null, null, null, null, null, null, null, null, null);
 
         // Then
         assertEquals(2, result.size());
@@ -99,7 +101,7 @@ class ModelRepositoryTest {
     void findByFilters_WithNonMatchingFilters_ShouldReturnEmptyList() {
         // When
         List<Model> result = modelRepository.findByFilters(
-                "Non-existent", null, null, null, null, null, null, null);
+                "Non-existent", null, null, null, null, null, null, null, null);
 
         // Then
         assertTrue(result.isEmpty());
