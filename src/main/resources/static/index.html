@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,33 +10,42 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="styles.css">
 
-    <!-- Angular 17 Standalone Components -->
-    <script type="importmap">
-    {
-        "imports": {
-            "@angular/core": "https://unpkg.com/@angular/core@17/bundles/core.umd.min.js",
-            "@angular/common": "https://unpkg.com/@angular/common@17/bundles/common.umd.min.js",
-            "@angular/platform-browser": "https://unpkg.com/@angular/platform-browser@17/bundles/platform-browser.umd.min.js",
-            "@angular/platform-browser-dynamic": "https://unpkg.com/@angular/platform-browser-dynamic@17/bundles/platform-browser-dynamic.umd.min.js",
-            "@angular/forms": "https://unpkg.com/@angular/forms@17/bundles/forms.umd.min.js",
-            "@angular/common/http": "https://unpkg.com/@angular/common@17/bundles/common-http.umd.min.js",
-            "rxjs": "https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"
-        }
-    }
+    <!-- Angular 2 Dependencies -->
+    <script src="https://unpkg.com/zone.js@0.6.25/dist/zone.js"></script>
+    <script src="https://unpkg.com/reflect-metadata@0.1.8/Reflect.js"></script>
+    <script src="https://unpkg.com/systemjs@0.19.39/dist/system.js"></script>
+    <script src="https://unpkg.com/typescript@2.0.0/lib/typescript.js"></script>
+    
+    <script>
+        System.config({
+            transpiler: 'typescript',
+            typescriptOptions: {
+                emitDecoratorMetadata: true
+            },
+            map: {
+                '@angular/core': 'https://unpkg.com/@angular/core@2.4.10/bundles/core.umd.js',
+                '@angular/common': 'https://unpkg.com/@angular/common@2.4.10/bundles/common.umd.js',
+                '@angular/platform-browser': 'https://unpkg.com/@angular/platform-browser@2.4.10/bundles/platform-browser.umd.js',
+                '@angular/platform-browser-dynamic': 'https://unpkg.com/@angular/platform-browser-dynamic@2.4.10/bundles/platform-browser-dynamic.umd.js',
+                '@angular/http': 'https://unpkg.com/@angular/http@2.4.10/bundles/http.umd.js',
+                '@angular/forms': 'https://unpkg.com/@angular/forms@2.4.10/bundles/forms.umd.js',
+                'rxjs': 'https://unpkg.com/rxjs@5.0.1'
+            },
+            packages: {
+                'rxjs': { defaultExtension: 'js' },
+                'app': { defaultExtension: 'ts' }
+            }
+        });
+        
+        System.import('app/main.ts').catch(function(err) {
+            console.error('Error loading application:', err);
+            document.getElementById('app').innerHTML = '<div class="alert alert-danger">Failed to load Angular application. Error: ' + err.message + '</div>';
+        });
     </script>
-    <script src="https://unpkg.com/zone.js@0.14.2/bundles/zone.umd.js"></script>
-    <script src="https://unpkg.com/rxjs@7/dist/bundles/rxjs.umd.min.js"></script>
-    <script src="https://unpkg.com/@angular/core@17/bundles/core.umd.min.js"></script>
-    <script src="https://unpkg.com/@angular/common@17/bundles/common.umd.min.js"></script>
-    <script src="https://unpkg.com/@angular/common@17/bundles/common-http.umd.min.js"></script>
-    <script src="https://unpkg.com/@angular/platform-browser@17/bundles/platform-browser.umd.min.js"></script>
-    <script src="https://unpkg.com/@angular/platform-browser-dynamic@17/bundles/platform-browser-dynamic.umd.min.js"></script>
-    <script src="https://unpkg.com/@angular/forms@17/bundles/forms.umd.min.js"></script>
 </head>
 <body>
     <div id="app">
         <model-registry-app>Loading...</model-registry-app>
     </div>
-    <script src="app.js"></script>
 </body>
 </html>
