@@ -4,8 +4,6 @@ import com.modelregistry.dto.ModelDTO;
 import com.modelregistry.entity.Model;
 import com.modelregistry.repository.ModelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -21,11 +19,6 @@ public class ModelService {
         return modelRepository.findAll().stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
-    }
-
-    public Page<ModelDTO> getAllModels(Pageable pageable) {
-        Page<Model> models = modelRepository.findAll(pageable);
-        return models.map(this::convertToDTO);
     }
 
     public Optional<ModelDTO> getModelById(Long id) {
@@ -73,16 +66,6 @@ public class ModelService {
                 .stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
-    }
-
-    public Page<ModelDTO> getFilteredModels(String modelName, String modelVersion, 
-                                          String modelSponsor, String modelValidatorName, String businessLine, 
-                                          String modelType, String riskRating, 
-                                          String status, String updatedBy, Pageable pageable) {
-        Page<Model> models = modelRepository.findByFilters(modelName, modelVersion, modelSponsor, 
-                                           modelValidatorName, businessLine, modelType, riskRating, 
-                                           status, updatedBy, pageable);
-        return models.map(this::convertToDTO);
     }
 
     private ModelDTO convertToDTO(Model model) {

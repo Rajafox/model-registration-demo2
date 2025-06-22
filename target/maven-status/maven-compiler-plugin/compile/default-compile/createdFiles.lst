@@ -1,8 +1,7 @@
+com/modelregistry/controller/ModelController.class
 com/modelregistry/repository/ModelRepository.class
 com/modelregistry/config/DataInitializer.class
-com/modelregistry/ModelRegistrationApplication.class
-com/modelregistry/config/SwaggerConfig.class
-com/modelregistry/controller/ModelController.class
 com/modelregistry/entity/Model.class
 com/modelregistry/dto/ModelDTO.class
 com/modelregistry/service/ModelService.class
+com/modelregistry/ModelRegistrationApplication.class

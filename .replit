@@ -3,10 +3,10 @@ entrypoint = "README.md"
 
 [nix]
 channel = "stable-24_05"
-packages = ["cowsay", "openjdk17", "nodejs_20", "maven"]
+packages = ["cowsay","openjdk17","nodejs_20","maven"]
 
 [workflows]
-runButton = "Run Full Stack App"
+runButton = "Run Spring Boot App"
 
 [[workflows.workflow]]
 name = "Run Spring Boot App"
@@ -21,50 +21,6 @@ args = "mvn clean compile"
 task = "shell.exec"
 args = "mvn spring-boot:run"
 
-[[workflows.workflow]]
-name = "Build Angular App"
-author = 43933978
-mode = "sequential"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npm install"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npm run build"
-
-[[workflows.workflow]]
-name = "Run Angular Dev Server"
-author = 43933978
-mode = "sequential"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npm install"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npm run start"
-
-[[workflows.workflow]]
-name = "Run Full Stack App"
-author = 43933978
-mode = "parallel"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "mvn spring-boot:run"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npm run start"
-
 [[ports]]
 localPort = 5000
 externalPort = 80
-
-[deployment]
-deploymentTarget = "cloudrun"
-run = ["sh", "-c", "java -jar target/model-registration-app-0.0.1-SNAPSHOT.jar"]
-build = ["sh", "-c", "mvn clean package -DskipTests"]

@@ -1,27 +1,339 @@
+
 <!DOCTYPE html>
-<html>
+<html lang="en" ng-app="modelRegistryApp">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Model Registration System</title>
-    <base href="/">
-
-    <!-- Bootstrap CSS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Custom styles -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-    <div id="app">
-        <model-registry-app>
-            <div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Loading...</span>
+<body ng-controller="ModelController">
+    <div class="container-fluid">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">
+                    <i class="fas fa-chart-line me-2"></i>Model Registration System
+                </a>
+            </div>
+        </nav>
+
+        <!-- Model Inventory Grid -->
+        <div class="card" ng-show="currentView === 'grid'">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="fas fa-table me-2"></i>Model Inventory
+                </h5>
+                <button class="btn btn-success" ng-click="showCreateForm()">
+                    <i class="fas fa-plus me-2"></i>Create Model
+                </button>
+            </div>
+            <div class="card-body">
+                <!-- Filters -->
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <input type="text" class="form-control" placeholder="Model Name" 
+                               ng-model="filters.modelName" ng-change="applyFilters()">
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control" placeholder="Model Version" 
+                               ng-model="filters.modelVersion" ng-change="applyFilters()">
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control" placeholder="Model Sponsor" 
+                               ng-model="filters.modelSponsor" ng-change="applyFilters()">
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control" placeholder="Model Validator Name" 
+                               ng-model="filters.modelValidatorName" ng-change="applyFilters()">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <select class="form-select" ng-model="filters.businessLine" ng-change="applyFilters()">
+                            <option value="">All Business Lines</option>
+                            <option value="Retail Banking">Retail Banking</option>
+                            <option value="Wholesale Lending">Wholesale Lending</option>
+                            <option value="Investment Banking">Investment Banking</option>
+                            <option value="Risk Management">Risk Management</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <select class="form-select" ng-model="filters.modelType" ng-change="applyFilters()">
+                            <option value="">All Model Types</option>
+                            <option value="Credit Risk">Credit Risk</option>
+                            <option value="Market Risk">Market Risk</option>
+                            <option value="Operational Risk">Operational Risk</option>
+                            <option value="AML">AML</option>
+                            <option value="Capital Calculation">Capital Calculation</option>
+                            <option value="Valuation">Valuation</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select" ng-model="filters.riskRating" ng-change="applyFilters()">
+                            <option value="">All Risk Ratings</option>
+                            <option value="High">High</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Low">Low</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select" ng-model="filters.status" ng-change="applyFilters()">
+                            <option value="">All Statuses</option>
+                            <option value="Draft">Draft</option>
+                            <option value="In Development">In Development</option>
+                            <option value="Validated">Validated</option>
+                            <option value="Production">Production</option>
+                            <option value="Retired">Retired</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control" placeholder="Updated By" 
+                               ng-model="filters.updatedBy" ng-change="applyFilters()">
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th ng-click="sortBy('modelId')" class="sortable">
+                                    Model ID <i class="fas fa-sort"></i>
+                                </th>
+                                <th ng-click="sortBy('modelName')" class="sortable">
+                                    Model Name <i class="fas fa-sort"></i>
+                                </th>
+                                <th ng-click="sortBy('modelVersion')" class="sortable">
+                                    Model Version <i class="fas fa-sort"></i>
+                                </th>
+                                <th ng-click="sortBy('modelSponsor')" class="sortable">
+                                    Model Sponsor <i class="fas fa-sort"></i>
+                                </th>
+                                <th ng-click="sortBy('modelValidatorName')" class="sortable">
+                                    Model Validator Name <i class="fas fa-sort"></i>
+                                </th>
+                                <th ng-click="sortBy('businessLine')" class="sortable">
+                                    Business Line <i class="fas fa-sort"></i>
+                                </th>
+                                <th ng-click="sortBy('modelType')" class="sortable">
+                                    Model Type <i class="fas fa-sort"></i>
+                                </th>
+                                <th ng-click="sortBy('riskRating')" class="sortable">
+                                    Risk Rating <i class="fas fa-sort"></i>
+                                </th>
+                                <th ng-click="sortBy('status')" class="sortable">
+                                    Status <i class="fas fa-sort"></i>
+                                </th>
+                                <th ng-click="sortBy('updatedBy')" class="sortable">
+                                    Updated By <i class="fas fa-sort"></i>
+                                </th>
+                                <th ng-click="sortBy('updatedOn')" class="sortable">
+                                    Updated On <i class="fas fa-sort"></i>
+                                </th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="model in models | orderBy:sortField:reverse">
+                                <td>{{model.modelId}}</td>
+                                <td>{{model.modelName}}</td>
+                                <td>{{model.modelVersion}}</td>
+                                <td>{{model.modelSponsor}}</td>
+                                <td>{{model.modelValidatorName}}</td>
+                                <td>{{model.businessLine}}</td>
+                                <td>{{model.modelType}}</td>
+                                <td>
+                                    <span class="badge" ng-class="{
+                                        'bg-danger': model.riskRating === 'High',
+                                        'bg-warning': model.riskRating === 'Medium',
+                                        'bg-success': model.riskRating === 'Low'
+                                    }">{{model.riskRating}}</span>
+                                </td>
+                                <td>
+                                    <span class="badge" ng-class="{
+                                        'bg-secondary': model.status === 'Draft',
+                                        'bg-info': model.status === 'In Development',
+                                        'bg-warning': model.status === 'Validated',
+                                        'bg-success': model.status === 'Production',
+                                        'bg-dark': model.status === 'Retired'
+                                    }">{{model.status}}</span>
+                                </td>
+                                <td>{{model.updatedBy}}</td>
+                                <td>{{model.updatedOn | date:'dd/MM/yyyy HH:mm'}}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary me-1" ng-click="editModel(model)">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" ng-click="deleteModel(model.modelId)">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
-        </model-registry-app>
+        </div>
+
+        <!-- Create/Edit Model Form -->
+        <div class="card" ng-show="currentView === 'form'">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-plus me-2"></i>{{isEditing ? 'Edit' : 'Create'}} Model
+                </h5>
+            </div>
+            <div class="card-body">
+                <form name="modelForm" ng-submit="saveModel()">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Model ID</label>
+                                <input type="text" class="form-control" ng-model="currentModel.modelId" 
+                                       disabled ng-show="isEditing">
+                                <input type="text" class="form-control" value="Auto-generated" 
+                                       disabled ng-show="!isEditing">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Model Name *</label>
+                                <input type="text" class="form-control" ng-model="currentModel.modelName" 
+                                       required name="modelName">
+                                <div class="text-danger" ng-show="modelForm.modelName.$invalid && modelForm.modelName.$touched">
+                                    Model name is required
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Model Version *</label>
+                                <input type="text" class="form-control" ng-model="currentModel.modelVersion" 
+                                       required name="modelVersion" placeholder="e.g., v1.0">
+                                <div class="text-danger" ng-show="modelForm.modelVersion.$invalid && modelForm.modelVersion.$touched">
+                                    Model version is required
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Model Sponsor *</label>
+                                <input type="text" class="form-control" ng-model="currentModel.modelSponsor" 
+                                       required name="modelSponsor" placeholder="Department Head or Individual Name">
+                                <div class="text-danger" ng-show="modelForm.modelSponsor.$invalid && modelForm.modelSponsor.$touched">
+                                    Model sponsor is required
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Model Validator Name *</label>
+                                <input type="text" class="form-control" ng-model="currentModel.modelValidatorName" 
+                                       required name="modelValidatorName" placeholder="Validator Name">
+                                <div class="text-danger" ng-show="modelForm.modelValidatorName.$invalid && modelForm.modelValidatorName.$touched">
+                                    Model validator name is required
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Business Line *</label>
+                                <select class="form-select" ng-model="currentModel.businessLine" 
+                                        required name="businessLine">
+                                    <option value="">Select Business Line</option>
+                                    <option value="Retail Banking">Retail Banking</option>
+                                    <option value="Wholesale Lending">Wholesale Lending</option>
+                                    <option value="Investment Banking">Investment Banking</option>
+                                    <option value="Risk Management">Risk Management</option>
+                                </select>
+                                <div class="text-danger" ng-show="modelForm.businessLine.$invalid && modelForm.businessLine.$touched">
+                                    Business line is required
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Model Type *</label>
+                                <select class="form-select" ng-model="currentModel.modelType" 
+                                        required name="modelType">
+                                    <option value="">Select Model Type</option>
+                                    <option value="Credit Risk">Credit Risk</option>
+                                    <option value="Market Risk">Market Risk</option>
+                                    <option value="Operational Risk">Operational Risk</option>
+                                    <option value="AML">AML</option>
+                                    <option value="Capital Calculation">Capital Calculation</option>
+                                    <option value="Valuation">Valuation</option>
+                                </select>
+                                <div class="text-danger" ng-show="modelForm.modelType.$invalid && modelForm.modelType.$touched">
+                                    Model type is required
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Risk Rating *</label>
+                                <select class="form-select" ng-model="currentModel.riskRating" 
+                                        required name="riskRating">
+                                    <option value="">Select Risk Rating</option>
+                                    <option value="High">High</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="Low">Low</option>
+                                </select>
+                                <div class="text-danger" ng-show="modelForm.riskRating.$invalid && modelForm.riskRating.$touched">
+                                    Risk rating is required
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6" ng-show="isEditing">
+                            <div class="mb-3">
+                                <label class="form-label">Status *</label>
+                                <select class="form-select" ng-model="currentModel.status" 
+                                        ng-required="isEditing" name="status">
+                                    <option value="">Select Status</option>
+                                    <option value="Draft">Draft</option>
+                                    <option value="In Development">In Development</option>
+                                    <option value="Validated">Validated</option>
+                                    <option value="Production">Production</option>
+                                    <option value="Retired">Retired</option>
+                                </select>
+                                <div class="text-danger" ng-show="modelForm.status.$invalid && modelForm.status.$touched">
+                                    Status is required
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary" ng-disabled="modelForm.$invalid">
+                                    <i class="fas fa-save me-2"></i>{{isEditing ? 'Update' : 'Submit'}}
+                                </button>
+                                <button type="button" class="btn btn-secondary" ng-click="saveDraft()" 
+                                        ng-show="!isEditing">
+                                    <i class="fas fa-file-alt me-2"></i>Save as Draft
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary" ng-click="cancelForm()">
+                                    <i class="fas fa-times me-2"></i>Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
+
+    <script src="app.js"></script>
 </body>
 </html>
