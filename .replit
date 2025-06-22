@@ -3,7 +3,7 @@ entrypoint = "README.md"
 
 [nix]
 channel = "stable-24_05"
-packages = ["cowsay","openjdk17","nodejs_20","maven"]
+packages = ["cowsay", "openjdk17", "nodejs_20", "maven"]
 
 [workflows]
 runButton = "Run Spring Boot App"
@@ -24,3 +24,8 @@ args = "mvn spring-boot:run"
 [[ports]]
 localPort = 5000
 externalPort = 80
+
+[deployment]
+deploymentTarget = "cloudrun"
+run = ["sh", "-c", "java -jar target/model-registration-app-0.0.1-SNAPSHOT.jar"]
+build = ["sh", "-c", "mvn clean package -DskipTests"]
