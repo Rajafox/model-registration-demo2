@@ -5,6 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Model Registration System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📊</text></svg>">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -13,11 +17,16 @@
 </head>
 <body ng-controller="ModelController">
     <div class="container-fluid">
-        <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
-            <div class="container-fluid">
+        <nav class="navbar navbar-expand-lg mb-4">
+            <div class="container-fluid px-4">
                 <a class="navbar-brand" href="#">
-                    <i class="fas fa-chart-line me-2"></i>Model Registration System
+                    <i class="fas fa-database"></i>Model Registration System
                 </a>
+                <div class="navbar-nav ms-auto">
+                    <span class="navbar-text text-muted">
+                        <i class="fas fa-user-circle me-1"></i>Admin Dashboard
+                    </span>
+                </div>
             </div>
         </nav>
 
@@ -28,7 +37,7 @@
                     <i class="fas fa-table me-2"></i>Model Inventory
                 </h5>
                 <button class="btn btn-success" ng-click="showCreateForm()">
-                    <i class="fas fa-plus me-2"></i>Create Model
+                    <i class="fas fa-plus-circle me-2"></i>Create New Model
                 </button>
             </div>
             <div class="card-body">
@@ -242,12 +251,14 @@
                                 <td>{{model.updatedBy}}</td>
                                 <td>{{model.updatedOn | date:'dd/MM/yyyy HH:mm'}}</td>
                                 <td>
-                                    <button class="btn btn-sm btn-primary me-1" ng-click="editModel(model)">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger" ng-click="deleteModel(model.modelId)">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
+                                    <div class="btn-group" role="group">
+                                        <button class="btn btn-sm btn-primary" ng-click="editModel(model)" title="Edit Model">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-danger" ng-click="deleteModel(model.modelId)" title="Delete Model">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>
@@ -295,7 +306,8 @@
         <div class="card" ng-show="currentView === 'form'">
             <div class="card-header">
                 <h5 class="mb-0">
-                    <i class="fas fa-plus me-2"></i>{{isEditing ? 'Edit' : 'Create'}} Model
+                    <i class="fas" ng-class="{'fa-edit': isEditing, 'fa-plus-circle': !isEditing}"></i>
+                    {{isEditing ? 'Edit Model' : 'Create New Model'}}
                 </h5>
             </div>
             <div class="card-body">
@@ -425,16 +437,17 @@
                     </div>
                     <div class="row">
                         <div class="col-12">
-                            <div class="d-flex gap-2">
+                            <div class="d-flex gap-2 flex-wrap">
                                 <button type="submit" class="btn btn-primary" ng-disabled="modelForm.$invalid">
-                                    <i class="fas fa-save me-2"></i>{{isEditing ? 'Update' : 'Submit'}}
+                                    <i class="fas" ng-class="{'fa-save': !isEditing, 'fa-sync-alt': isEditing}"></i>
+                                    {{isEditing ? 'Update Model' : 'Submit Model'}}
                                 </button>
                                 <button type="button" class="btn btn-secondary" ng-click="saveDraft()" 
                                         ng-show="!isEditing">
-                                    <i class="fas fa-file-alt me-2"></i>Save as Draft
+                                    <i class="fas fa-file-text me-2"></i>Save as Draft
                                 </button>
                                 <button type="button" class="btn btn-outline-secondary" ng-click="cancelForm()">
-                                    <i class="fas fa-times me-2"></i>Cancel
+                                    <i class="fas fa-times-circle me-2"></i>Cancel
                                 </button>
                             </div>
                         </div>
